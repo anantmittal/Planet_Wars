@@ -7,9 +7,12 @@ import java.io.PrintWriter;
 import java.util.*;
 
 
-public class Agent_007  {
+public class Agent_007  
+{
 	private static Kernel kernel;
 	private static Agent agent;
+	private Gluetosoar inputToSoar;
+	private Soartoglue outputFromSoar;
 	
 	public Agent_007()
 	{
@@ -21,14 +24,17 @@ public class Agent_007  {
 		String version = kernel.GetSoarKernelVersion() ;
 		System.out.println("Soar version " + version) ;
 		
-		agent = kernel.CreateAgent("mario") ;
+		agent = kernel.CreateAgent("planetwars") ;
 		if (kernel.HadError())
 			throw new IllegalStateException("Error creating agent: " + kernel.GetLastErrorDescription()) ;
 		
 
-		//boolean load = agent.LoadProductions(productions);
+	//	boolean load = agent.LoadProductions(productions);
 		//if (!load || agent.HadError())
-		//	throw new IllegalStateException("Error loading productions: " + agent.GetLastErrorDescription()) ;
+			//throw new IllegalStateException("Error loading productions: " + agent.GetLastErrorDescription()) ;
+		
+		inputToSoar = new Gluetosoar(agent);
+		outputFromSoar = new Soartoglue(agent);
 		
 		kernel.SetAutoCommit(false);
 		
