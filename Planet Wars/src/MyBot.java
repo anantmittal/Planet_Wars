@@ -2,6 +2,23 @@ import java.util.*;
 import sml.*;
 public class MyBot 
 {
+	/*
+ 	private static FloatElement planet_x;
+ 	private static FloatElement planet_y;
+ 	private static IntElement growthrate;
+ 	private static IntElement p_owner;
+ 	private static IntElement planetid;
+ 	private static IntElement planet_num_ship;
+ 	
+ 	
+ 	private static IntElement f_owner;
+ 	private static IntElement fleet_num_ship;
+ 	private static IntElement source_planet;
+ 	private static IntElement dest_planet;
+ 	private static IntElement total_trip;
+ 	private static IntElement turns_left;*/
+ 	
+ 	//My own start here
 	private static Kernel kernel;
  	private static Agent agent;
  	
@@ -11,25 +28,62 @@ public class MyBot
 
  	
  	private static Identifier planet;
- 	private static FloatElement planet_x;
- 	private static FloatElement planet_y;
- 	private static IntElement growthrate;
- 	private static IntElement p_owner;
- 	private static IntElement planetid;
- 	private static IntElement planet_num_ship;
- 		
  	private static Identifier fleet;
- 	private static IntElement f_owner;
- 	private static IntElement fleet_num_ship;
- 	private static IntElement source_planet;
- 	private static IntElement dest_planet;
- 	private static IntElement total_trip;
- 	private static IntElement turns_left;
+ 	private static IntElement planet_num_ship_us;
+ 	private static IntElement planet_num_ship_opponent;
+ 	private static IntElement productions_us;
+ 	private static IntElement productions_opponent;
+ 	private static IntElement number_Fleets;
+ 	//private static BooleanElement attackmode;
+ 	private static IntElement number_of_myfleet_size;
+ 	//My own ends here
+ 	
+ 	
 
-	public static void DoTurn(PlanetWars pw) 
+	public static void DoTurn(PlanetWars pw, Agent a) 
     {
-		// (1) If we currently have a fleet in flight, just do nothing.
-		if (pw.MyFleets().size() >= 1) 
+		int num_ships_us = pw.NumShips(1);
+		int num_ships_opponent = pw.NumShips(2);
+		int prod_us = pw.Production(1);
+		int prod_opponent = pw.Production(2);
+		int numFleets = 1;
+	//	boolean attackMode = false;
+		int number_of_our_fleets_in_flight = pw.MyFleets().size();
+		a.Update(planet_num_ship_us, num_ships_us);
+		a.Update(planet_num_ship_opponent, num_ships_opponent);
+		a.Update(productions_us, prod_us);
+		a.Update(productions_opponent, prod_opponent);
+		a.Update(number_Fleets, numFleets);
+	//	a.Update(attackmode, attackMode);
+		a.Update(number_of_myfleet_size, number_of_our_fleets_in_flight);
+		a.Commit();
+		a.RunSelfTilOutput();
+		//int numFleets = 1;
+		boolean attackMode = false;
+		if (pw.NumShips(1) > pw.NumShips(2)) 
+		{
+		    if (pw.Production(1) > pw.Production(2)) 
+		    {
+			numFleets = 1;
+			attackMode = true;
+		    } else 
+		    {
+			numFleets = 3;
+		    }
+		} 
+		else 
+		{
+		    if (pw.Production(1) > pw.Production(2)) 
+		    {
+			numFleets = 1;
+		    } else 
+		    {
+			numFleets = 5;
+		    }	    
+		}
+		// (1) If we current have more tha numFleets fleets in flight, just do
+		// nothing until at least one of the fleets arrives.
+		if (pw.MyFleets().size() >= numFleets) 
 		{
 		    return;
 		}
@@ -38,7 +92,7 @@ public class MyBot
 		double sourceScore = Double.MIN_VALUE;
 		for (Planet p : pw.MyPlanets()) 
 		{
-		    double score = (double)p.NumShips();
+		    double score = (double)p.NumShips() / (1 + p.GrowthRate());
 		    if (score > sourceScore) 
 		    {
 				sourceScore = score;
@@ -48,9 +102,14 @@ public class MyBot
 		// (3) Find the weakest enemy or neutral planet.
 		Planet dest = null;
 		double destScore = Double.MIN_VALUE;
-		for (Planet p : pw.NotMyPlanets()) 
+		List<Planet> candidates = pw.NotMyPlanets();
+		if (attackMode) 
 		{
-		    double score = 1.0 / (1 + p.NumShips());
+		    candidates = pw.EnemyPlanets();
+		}
+		for (Planet p : candidates) 
+		{
+		    double score = (double)(1 + p.GrowthRate()) / p.NumShips();
 		    if (score > destScore) 
 		    {
 				destScore = score;
@@ -61,9 +120,17 @@ public class MyBot
 		// planet that I do not own.
 		if (source != null && dest != null) 
 		{
-		    int numShips = source.NumShips()/2;
-		    pw.IssueOrder(source, dest, numShips);
-		}
+		    int numShips = source.NumShips() / 2;
+		    for (int i = 0; i < a.GetNumberCommands(); ++i) 
+		    {
+				Identifier commandWME = a.GetCommand(i);
+				String commandName = commandWME.GetAttribute();
+				if (commandName.equals("stop")) 
+				{
+					pw.IssueOrder(source, dest, numShips);
+				}
+			}
+		}	
     }
 
 
@@ -72,7 +139,8 @@ public class MyBot
     	kernel = kernel.CreateRemoteConnection(true,null,12121);
     	String version = kernel.GetSoarKernelVersion();
     	System.out.println("soar version : "+version);
-    	agent = kernel.CreateAgent("planetwars") ;
+    	agent = kernel.GetAgent("soar1");	//soar1 is the name of the agent in saor
+    	System.out.println(agent.GetAgentName());
         if (kernel.HadError())
                 throw new IllegalStateException("Error creating agent: " + kernel.GetLastErrorDescription()) ;
     	
@@ -83,9 +151,21 @@ public class MyBot
 		isInit = agent.CreateStringWME(inputLink, "init","no");
 		planetwarsWME = agent.CreateIdWME(inputLink, "planetwars");
 		planet = agent.CreateIdWME(planetwarsWME, "planet");
+		fleet = agent.CreateIdWME(planetwarsWME, "fleet");
+	
+		//My own WMEs start here
 		
+		planet_num_ship_us=agent.CreateIntWME(planet,"planet_num_ship_us",0);
+		planet_num_ship_opponent=agent.CreateIntWME(planet,"planet_num_ship_opponent",0);
+		productions_us=agent.CreateIntWME(planet,"productions_us",0);
+		productions_opponent=agent.CreateIntWME(planet,"productions_opponent",0);
+		number_Fleets=agent.CreateIntWME(fleet,"number_Fleets",0);
+		//attackmode = agent.CreateBooleanWME(planetwarsWME, "attackmode",false);
+	 	number_of_myfleet_size = agent.CreateIntWME(fleet,"number_of_myfleet_size",0);;
 		
-		p_owner=agent.CreateIntWME(planet, "p_owner", 0);
+		//My own WMEs end here
+		
+	/*	p_owner=agent.CreateIntWME(planet, "p_owner", 0);
 		planetid=agent.CreateIntWME(planet, "planetid", 0);
 		growthrate = agent.CreateIntWME(planet, "growthrate", 0);
 		planet_x = agent.CreateFloatWME(planet, "x", 0.0);
@@ -99,10 +179,10 @@ public class MyBot
 		source_planet =agent.CreateIntWME(fleet, "source_planet", 0);
 		dest_planet = agent.CreateIntWME(fleet, "dest_planet", 0);
 		total_trip = agent.CreateIntWME(fleet, "total_trip", 0);
-		turns_left = agent.CreateIntWME(fleet, "turns_left", 0);
-
-        kernel.SetAutoCommit(true);
-        agent.RunSelfTilOutput();
+		turns_left = agent.CreateIntWME(fleet, "turns_left", 0); */
+		
+        kernel.SetAutoCommit(false);
+        
         
         String line = "";
 		String message = "";
@@ -117,7 +197,7 @@ public class MyBot
 					    if (line.equals("go")) 
 					    {
 							PlanetWars pw = new PlanetWars(message);
-							DoTurn(pw);
+							DoTurn(pw,agent);
 						    pw.FinishTurn();
 							message = "";
 					    } 
@@ -137,5 +217,6 @@ public class MyBot
 		{
 	    // Owned.
 		}
+		
     }
 }
