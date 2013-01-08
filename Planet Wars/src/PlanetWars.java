@@ -7,13 +7,6 @@ import java.util.*;
 import java.io.*;
 
 public class PlanetWars {
-
-    // Store all the planets and fleets. OMG we wouldn't wanna lose all the
-    // planets and fleets, would we!?
-    private ArrayList<Planet> planets;
-    private ArrayList<Fleet> fleets;
-
-
     // Constructs a PlanetWars object instance, given a string containing a
     // description of a game state.
     public PlanetWars(String gameStateString) {
@@ -97,31 +90,11 @@ public class PlanetWars {
 	return r;
     }
 
-    // Return a list of all the fleets.
-    public List<Fleet> Fleets() {
-	List<Fleet> r = new ArrayList<Fleet>();
-	for (Fleet f : fleets) {
-            r.add(f);
-	}
-	return r;
-    }
-
     // Return a list of all the fleets owned by the current player.
     public List<Fleet> MyFleets() {
 	List<Fleet> r = new ArrayList<Fleet>();
 	for (Fleet f : fleets) {
 	    if (f.Owner() == 1) {
-		r.add(f);
-	    }
-	}
-	return r;
-    }
-
-    // Return a list of all the fleets owned by enemy players.
-    public List<Fleet> EnemyFleets() {
-	List<Fleet> r = new ArrayList<Fleet>();
-	for (Fleet f : fleets) {
-	    if (f.Owner() != 1) {
 		r.add(f);
 	    }
 	}
@@ -134,6 +107,15 @@ public class PlanetWars {
     public int Distance(int sourcePlanet, int destinationPlanet) {
 	Planet source = planets.get(sourcePlanet);
 	Planet destination = planets.get(destinationPlanet);
+	double dx = source.X() - destination.X();
+	double dy = source.Y() - destination.Y();
+	return (int)Math.ceil(Math.sqrt(dx * dx + dy * dy));
+    }
+
+    // Returns the distance between two planets, rounded up to the next highest
+    // integer. This is the number of discrete time steps it takes to get
+    // between the two planets.
+    public int Distance(Planet source, Planet destination) {
 	double dx = source.X() - destination.X();
 	double dy = source.Y() - destination.Y();
 	return (int)Math.ceil(Math.sqrt(dx * dx + dy * dy));
@@ -235,6 +217,17 @@ public class PlanetWars {
 	return numShips;
     }
 
+    // Returns the rodroduction of the given player.
+    public int Production(int playerID) {
+	int prod = 0;
+	for (Planet p : planets) {
+	    if (p.Owner() == playerID) {
+		prod += p.GrowthRate();
+	    }
+	}
+	return prod;
+    }
+
     // Parses a game state from a string. On success, returns 1. On failure,
     // returns 0.
     private int ParseGameState(String s) {
@@ -319,5 +312,8 @@ public class PlanetWars {
 	return ParseGameState(s);
     }
 
-    
+    // Store all the planets and fleets. OMG we wouldn't wanna lose all the
+    // planets and fleets, would we!?
+    private ArrayList<Planet> planets;
+    private ArrayList<Fleet> fleets;
 }
