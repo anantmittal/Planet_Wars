@@ -1,4 +1,3 @@
-
 public class Fleet implements Comparable, Cloneable {
     // Initializes a fleet.
     public Fleet(int owner,
@@ -31,7 +30,7 @@ public class Fleet implements Comparable, Cloneable {
     public int Owner() {
 	return owner;
     }
-
+    
     public int NumShips() {
 	return numShips;
     }
