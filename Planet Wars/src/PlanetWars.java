@@ -31,7 +31,7 @@ public class PlanetWars {
 	return fleets.size();
     }
 
-    // Returns the fleet with the given fleet_id. Fleets are numbered starting
+   // Returns the fleet with the given fleet_id. Fleets are numbered starting
     // with 0. There are NumFleets() fleets. fleet_id's are not consistent from
     // one turn to the next.
     public Fleet GetFleet(int fleetID) {
