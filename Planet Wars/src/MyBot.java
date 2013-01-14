@@ -25,8 +25,7 @@ public class MyBot
  	private static Identifier inputLink;
  	private static Identifier planetwarsWME;
  	private static StringElement isInit;
-
- 	
+	
  	private static Identifier planet;
  	private static Identifier fleet;
  	private static IntElement planet_num_ship_us;
