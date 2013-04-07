@@ -2,19 +2,18 @@
 # If it is there, propose the stop operator
 sp {propose*stop
     (state <s> ^io.input-link <il>)
-    (<il> ^init  no
-        ^planetwars <pw>)
+    (<il> ^init  no ^planetwars <pw>)
     (<pw> ^fleet <fl>)
     (<pw> ^planet <pl>)
      (<pl> ^planet_num_ship_us <num_us>)
-    (<pl> ^planet_num_ship_opponent {<num_opp> < <num_us>})
+    (<pl> ^planet_num_ship_opponent < <num_us>)
    
     (<fl> ^number_Fleets <num_fleet>)    
     (<pw> ^attack_mode <am>)
   -->
     (<s> ^operator <o> +)
     (<o> ^name stop
-    	^planetwars <pw>
+        ^planetwars <pw>
     	^fleet <fl>
     	^planet <pl>)
 }
@@ -33,8 +32,18 @@ sp {apply*stop
     (<pl> ^production_opponent < <pro_us>)
              
 -->
-    (<ol> ^attack_mode true)
-    (<ol> ^number_fleets 1)
-    (<ol> ^stop <stop>)
+	(<ol> ^stop <stop>)
+    (<stop> ^attack_mode true)
+    (<stop> ^number_fleets 1)
     
+}
+
+
+sp {apply*remove-action
+   (state <s> ^operator <o>
+              ^io.output-link <out>)
+   (<out> ^<action-name> <a>)
+   (<a> ^status complete)
+-->
+   (<out> ^<action-name> <a> -)
 }
