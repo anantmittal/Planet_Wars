@@ -1,5 +1,4 @@
-# Look for the hello world WME on the input-link
-# If it is there, propose the stop operator
+
 sp {propose*stop
     (state <s> ^io.input-link <il>)
     (<il> ^init no ^planetwars <pw>)
@@ -17,9 +16,7 @@ sp {propose*stop
 	  
 }
 
-# Apply the stop operator by creating an empty 
-# identifier on the output link. This is essentially
-# a command with no parameters.
+
 sp {apply*stop
     (state <s> ^operator <o> 
                ^io.output-link <ol>)
