@@ -7,9 +7,7 @@ import java.io.PrintWriter;
 
 import sml.*;
 public class Soaragent 
-{
- 
- 	
+{ 	
  	//My own start here
 	private static Kernel kernel;
  	private static Agent agent;
@@ -62,24 +60,39 @@ public class Soaragent
 	    {
 			Identifier commandWME = a.GetCommand(i);
 			String commandName = commandWME.GetAttribute();
-			if (commandName.equals("stop"))
+			if (commandName.equals("first"))
 			{
-				csv.write("\nanant\n");
+				csv.write("\nFirst Prod\n");
 				attackmode_1=commandWME.GetParameterValue("attack_mode");
-				//numFleets=Integer.parseInt(commandWME.GetParameterValue("number_fleets"));
+				numFleets=Integer.parseInt(commandWME.GetParameterValue("number_fleets"));
 				csv.write("\nattackmode_1"+attackmode_1+"\n");
-				//csv.write("\nnumFleets"+numFleets+"\n");
-				csv.write("\nanant\n");			
+				csv.write("\nnumFleets"+numFleets+"\n");
 				break;
 				//commandWME.AddStatusComplete();
 			}
-			if (commandName.equals("start"))
+			if (commandName.equals("second"))
 			{
-				//attackmode_1=commandWME.GetParameterValue("attack_mode");
-				//numFleets=Integer.parseInt(commandWME.GetParameterValue("number_fleets"));
-				//csv.write("\nattackmode_1"+attackmode_1+"\n");
-				//csv.write("\nnumFleets"+numFleets+"\n");
-				//csv.write("\nanant\n");			
+				csv.write("\nSecond Prod\n");
+				numFleets=Integer.parseInt(commandWME.GetParameterValue("number_fleets"));
+				csv.write("\nnumFleets"+numFleets+"\n");		
+				break;
+				//commandWME.AddStatusComplete();
+			}
+			if (commandName.equals("third"))
+			{
+				csv.write("\nThird Prod\n");
+				numFleets=Integer.parseInt(commandWME.GetParameterValue("number_fleets"));
+				csv.write("\nnumFleets"+numFleets+"\n");
+					
+				break;
+				//commandWME.AddStatusComplete();
+			}
+			if (commandName.equals("fourth"))
+			{
+				csv.write("\nFourth Prod\n");
+				numFleets=Integer.parseInt(commandWME.GetParameterValue("number_fleets"));
+				csv.write("\nnumFleets"+numFleets+"\n");
+					
 				break;
 				//commandWME.AddStatusComplete();
 			}
@@ -87,7 +100,7 @@ public class Soaragent
 
 
 
-		if(pw.NumShips(1) > pw.NumShips(2)) 
+		/*if(pw.NumShips(1) > pw.NumShips(2)) 
 		{
 			if (pw.Production(1) < pw.Production(2))
 			numFleets = 3;
@@ -101,7 +114,7 @@ public class Soaragent
 		    {
 			numFleets = 5;
 		    }	    
-		}
+		}*/
 		if(attackmode_1=="true")
 			attackMode=true;
 
@@ -216,26 +229,26 @@ public class Soaragent
 		{
 		    while ((c = System.in.read()) >= 0) 
 		    {
-  				switch (c) 
-  				{
-  					case '\n':
-  					    if (line.equals("go")) 
-  					    {
-  							PlanetWars pw = new PlanetWars(message);
-  							DoTurn(pw,agent);
-  						    pw.FinishTurn();
-  							message = "";
-  					    } 
-  					    else 
-  					    {
-  							message += line + "\n";
-  						}
-  					    line = "";
-  					    break;
-  					default:
-  					    line += (char)c;
-  					    break;
-  				}
+				switch (c) 
+				{
+					case '\n':
+					    if (line.equals("go")) 
+					    {
+							PlanetWars pw = new PlanetWars(message);
+							DoTurn(pw,agent);
+						    pw.FinishTurn();
+							message = "";
+					    } 
+					    else 
+					    {
+							message += line + "\n";
+						}
+					    line = "";
+					    break;
+					default:
+					    line += (char)c;
+					    break;
+				}
 		    }
 		} 
 		catch (Exception e) 
