@@ -102,17 +102,17 @@ public class Soaragent
 
 		/*if(pw.NumShips(1) > pw.NumShips(2)) 
 		{
-			if (pw.Production(1) < pw.Production(2))
+			if (pw.Production(1) < pw.Production(2)) //This logic is being implemented by second.soar
 			numFleets = 3;
 		} 
 		else 
 		{
 		    if (pw.Production(1) > pw.Production(2)) 
 		    {
-			numFleets = 1;
+			numFleets = 1;  //This logic is being implemented by third.soar
 		    } else 
 		    {
-			numFleets = 5;
+			numFleets = 5;  //This logic is being implemented by fourth.soar
 		    }	    
 		}*/
 		if(attackmode_1=="true")
