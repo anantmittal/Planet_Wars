@@ -13,11 +13,10 @@ sp {propose*sixth
 
 sp {apply*sixth
     (state <s> ^operator <o> 
-  	#^io.input-link.planetwars.planet <pl>
                ^io.output-link <ol>)
                (<o> ^name sixth
-               	^planet <pl>)
-    #(<s> ^io.input-link.planetwars.planet <pl>)
+                   ^planet <pl>)
+    (<s> ^io.input-link.planetwars.planet <pl>)
     (<pl> ^candidate_s <cs>)
     (<cs> ^score  <val>)
     (<val> ^value <max-val>)
